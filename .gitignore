@@ -7,3 +7,5 @@ Duckietown Quick Reference
 __pycache__
 trainedModel
 output/
+.idea/
+.idea

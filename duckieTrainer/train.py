@@ -54,7 +54,7 @@ def mse(y_true, y_pred):
 
 # coefficient of determination (R^2) for regression
 def r_square(y_true, y_pred):
-    from tensorflow.keras import backend
+    from tensorflow.keras import backend as K
     SS_res = K.sum(K.square(y_true - y_pred))
     SS_tot = K.sum(K.square(y_true - K.mean(y_true)))
     return (1 - SS_res/(SS_tot + K.epsilon()))
