@@ -27,6 +27,7 @@ angular = []
 
 
 def configurables():
+    global EPOCHS,INIT_LR,BATCH_SIZE,LOG_DIR,OLD_DATASET,EXPERIMENTAL
     parser = argparse.ArgumentParser(description="Training Parameter Setup")
     parser.add_argument('--experimental', help='Set if to use the experimental data loading method.',
                         action='store_true', default=False)
@@ -39,9 +40,9 @@ def configurables():
     parser.add_argument('--batch_size', help='Set the batch size', default=16)
     parser.add_argument('--log_dir', help='Set the training log directory',default='train.log')
     args = parser.parse_args()
-    EPOCHS = args.epochs
-    INIT_LR = args.learning_rate
-    BATCH_SIZE = args.batch_size
+    EPOCHS = int(args.epochs)
+    INIT_LR = float(args.learning_rate)
+    BATCH_SIZE = int(args.batch_size)
     LOG_DIR = args.log_dir
     OLD_DATASET = args.old_dataset
     EXPERIMENTAL = args.experimental
