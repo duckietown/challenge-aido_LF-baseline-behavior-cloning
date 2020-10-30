@@ -5,6 +5,6 @@ FROM frank1chude1qian/dt-ml-base:latest
 COPY solution.py /submission
 COPY FrankNet.h5 /submission
 COPY helperFncs.py /submission
-
+COPY frankModel.py /submission
 # let's see what you've got there...
-ENTRYPOINT ["python", "solution.py"]
+ENTRYPOINT ["python3", "solution.py"]

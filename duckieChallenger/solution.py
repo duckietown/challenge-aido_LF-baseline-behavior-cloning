@@ -6,31 +6,22 @@ import tensorflow as tf
 from aido_schemas import (Context, DB20Commands, DB20Observations, EpisodeStart, JPGImage,
                           LEDSCommands, protocol_agent_DB20, PWMCommands, RGB, wrap_direct)
 
-
-from helperFncs import Validation_Functions, SteeringToWheelVelWrapper, image_resize
-
-MODEL = "FrankNet.h5"
+from frankModel import FrankNet
+from helperFncs import SteeringToWheelVelWrapper, image_resize
 
 #! Global Config
 expect_shape = (480, 640, 3)
 convertion_wrapper = SteeringToWheelVelWrapper()
-eval_func = Validation_Functions()
 
 
 class TensorflowTemplateAgent:
 
     def __init__(self):
-        # define observation and output shapes
-        self.dependencies = {'rmse': eval_func.rmse, 'mse': eval_func.mse,
-                             'r_square': eval_func.r_square, 'r_square_loss': eval_func.r_square_loss}
-        self.model = tf.keras.models.load_model(
-                MODEL, custom_objects=self.dependencies)
+        self.model = FrankNet.build(200, 150)
+        self.model.load_weights("FrankNet.h5")
         self.current_image = np.zeros(expect_shape)
         self.input_image = np.zeros((150, 200, 3))
         self.to_predictor = np.expand_dims(self.input_image, axis=0)
-
-        #! for fun
-        #self.led_counter = 0
 
     def init(self, context: Context):
         context.info('init()')
@@ -52,7 +43,6 @@ class TensorflowTemplateAgent:
 
 
     #! Modification here! Return with action
-
     def compute_action(self, observation):
         (linear, angular) = self.model.predict(observation)
         return linear, angular
@@ -60,9 +50,6 @@ class TensorflowTemplateAgent:
     #! Major Manipulation here Should not always change
     def on_received_get_commands(self, context: Context):
         linear, angular = self.compute_action(self.to_predictor)
-        #！ Speed surpression:
-        linear = linear * 0.85
-        angular = angular * 0.95
         #! Inverse Kinematics
         pwm_left, pwm_right = convertion_wrapper.convert(linear, angular)
         pwm_left = float(np.clip(pwm_left, -1, +1))
@@ -72,10 +59,9 @@ class TensorflowTemplateAgent:
         grey = RGB(0.0, 0.0, 0.0)
         red = RGB(255.0, 0.0, 0.0)
         blue = RGB(0.0, 0.0, 255.0)
-
         led_commands = LEDSCommands(red, grey, blue, red, blue)
 
-        #! Do not modify here!
+        #! Send PWM Command
         pwm_commands = PWMCommands(motor_left=pwm_left, motor_right=pwm_right)
         commands = DB20Commands(pwm_commands, led_commands)
         context.write('commands', commands)

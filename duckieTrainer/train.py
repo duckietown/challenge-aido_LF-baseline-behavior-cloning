@@ -13,14 +13,12 @@ print("Observed TF Version: ", tf.__version__)
 print("Observed Numpy Version: ", np.__version__)
 
 #! Training Configuration
-EPOCHS = 100  # EPOCHS
-INIT_LR = 1e-3  # LEARNING RATE
-BATCH_SIZE = 128  # Batch Size
+EPOCHS = 100
+INIT_LR = 1e-3
+BATCH_SIZE = 64
 LOG_DIR = 'train.log'
 EXPERIMENTAL = False
 OLD_DATASET = False
-#! Global training data storage
-# TODO: This should be optimized?
 observation = []
 linear = []
 angular = []
@@ -92,7 +90,7 @@ losses = {
     "Linear": "mse",
     "Angular": "mse"
 }
-lossWeights = {"Linear": 0.1, "Angular": 0.9}
+lossWeights = {"Linear": 1, "Angular": 2}
 
 # 5. Select optimizer
 opt = tf.keras.optimizers.Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
