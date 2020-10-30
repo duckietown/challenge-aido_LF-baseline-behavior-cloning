@@ -1,5 +1,0 @@
-opencv-python==4.4.0.42
-numpy==1.19.2
-aido-protocols-daffy
-duckietown-world-daffy
-duckietown-challenges-daffy

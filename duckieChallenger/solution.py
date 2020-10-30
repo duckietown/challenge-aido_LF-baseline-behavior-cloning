@@ -3,8 +3,8 @@ import cv2
 import numpy as np
 import tensorflow as tf
 
-from aido_schemas import EpisodeStart, protocol_agent_duckiebot1, PWMCommands, Duckiebot1Commands, LEDSCommands, RGB, \
-    wrap_direct, Context, Duckiebot1Observations, JPGImage
+from aido_schemas import (Context, DB20Commands, DB20Observations, EpisodeStart, JPGImage,
+                          LEDSCommands, protocol_agent_DB20, PWMCommands, RGB, wrap_direct)
 
 
 from helperFncs import Validation_Functions, SteeringToWheelVelWrapper, image_resize
@@ -42,7 +42,7 @@ class TensorflowTemplateAgent:
         context.info(f'Starting episode "{data.episode_name}".')
 
     #! Image pre-processing here
-    def on_received_observations(self, data: Duckiebot1Observations):
+    def on_received_observations(self, data: DB20Observations):
         camera: JPGImage = data.camera
         self.current_image = jpg2rgb(camera.jpg_data)
         self.input_image = image_resize(self.current_image, width=200)
@@ -77,7 +77,7 @@ class TensorflowTemplateAgent:
 
         #! Do not modify here!
         pwm_commands = PWMCommands(motor_left=pwm_left, motor_right=pwm_right)
-        commands = Duckiebot1Commands(pwm_commands, led_commands)
+        commands = DB20Commands(pwm_commands, led_commands)
         context.write('commands', commands)
 
     def finish(self, context: Context):
@@ -98,7 +98,7 @@ def jpg2rgb(image_data: bytes) -> np.ndarray:
 
 def main():
     node = TensorflowTemplateAgent()
-    protocol = protocol_agent_duckiebot1
+    protocol = protocol_agent_DB20
     wrap_direct(node=node, protocol=protocol)
 
 
