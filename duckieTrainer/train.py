@@ -9,11 +9,9 @@ print("Observed TF Version: ",tf.__version__)
 print("Observed Numpy Version: ",np.__version__)
 
 #! Training Configuration
-EPOCHS = 1000000 #EPOCHS
+EPOCHS = 100 #EPOCHS
 INIT_LR = 1e-3   #LEARNING RATE
-BS = 8          #Batch Size 
-GPU_COUNT = 1    # Change this value if you are using multiple GPUs
-MULTI_GPU = True #Change this to enable multi-GPU
+BS = 128          #Batch Size 
 
 #! Log Interpretation
 STORAGE_LOCATION = "trained_models/behavioral_cloning"
@@ -24,6 +22,8 @@ observation = []
 linear = []
 angular = []
 
+def configurables():
+    return
 
 def load_data():
     global observation, linear, angular
@@ -78,20 +78,7 @@ print('Load all complete')
 observation_train, observation_valid, linear_train, linear_valid, angular_train, angular_valid = train_test_split(
     observation, linear, angular, test_size=0.2, shuffle=True)
 
-# 3. Build the model using strategy
-if MULTI_GPU:
-    print("Currently using multiple GPUs")
-    if tf.config.list_physical_devices('gpu'):
-        strategy = tf.distribute.MirroredStrategy()
-    else:
-        print("Selected MultiGPU but only observe single GPU. Cancel Multi GPU training!")
-        strategy = tf.distribute.get_strategy()
-else:
-    print("Currently using single GPUs")
-    strategy = tf.distribute.get_strategy()
-
-with strategy.scope():
-    model = FrankNet.build(200, 150)
+model = FrankNet.build(200, 150)
 
 # 4. Define the loss function and weight
 losses = {
