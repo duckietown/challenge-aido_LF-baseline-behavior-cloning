@@ -1,4 +1,9 @@
+import cv2
 import numpy as np
+
+__all__ = ['SteeringToWheelVelWrapper', 'image_resize']
+
+
 class SteeringToWheelVelWrapper:
     """ Converts policy that was trained with [velocity|heading] actions to
     [wheelvel_left|wheelvel_right] to comply with AIDO evaluation format
@@ -24,7 +29,6 @@ class SteeringToWheelVelWrapper:
         self.wheel_dist = wheel_dist
 
     def convert(self, vel, angle):
-
         # Distance between the wheels
         baseline = self.wheel_dist
 
@@ -50,8 +54,9 @@ class SteeringToWheelVelWrapper:
         vels = np.array([u_l_limited, u_r_limited])
         return vels
 
-#! Resize Image: uses interpolation method
-import cv2
+
+# ! Resize Image: uses interpolation method
+
 def image_resize(image, width=None, height=None, inter=cv2.INTER_AREA):
     # initialize the dimensions of the image to be resized and
     # grab the image size
